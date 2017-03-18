@@ -1,9 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Help from '@/components/Help'
-import PullDown from '@/components/pull-down/PullDown'
 
-Vue.use(Router)
+Vue.use(Router);
+
+let routes = [];
+
+require('./nav.config.json').navList.map((page) => {
+    routes.push({
+        path: page.path,
+        name: page.name,
+        component: require(`../components${page.path + '/' + page.name}`)
+    })
+});
 
 export default new Router({
     routes: [
@@ -12,11 +21,7 @@ export default new Router({
             name: 'Help',
             component: Help
         },
-        {
-            path: '/pull-down',
-            name: 'PullDown',
-            component: PullDown
-        },
+        ...routes,
         {
             path: '*',
             redirect: '/'
