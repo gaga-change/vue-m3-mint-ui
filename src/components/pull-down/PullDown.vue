@@ -23,7 +23,9 @@
             <div slot="top" class="mint-loadmore-top">
                 <span v-show="topStatus !== 'loading'" :class="{ 'rotate': topStatus === 'drop' }">↓</span>
                 <span v-show="topStatus === 'loading'">
-                    <mt-spinner type="snake"></mt-spinner>
+                    <span v-if="msgShow">更新成功</span>
+                    <mt-spinner type="snake" v-if="!msgShow"></mt-spinner>
+
                 </span>
             </div>
         </mt-loadmore>
@@ -40,7 +42,9 @@
         data(){
             return {
                 list: [1, 2, 3, 4, 5],
-                topStatus: ''
+                topStatus: '',
+                msgShow: false,
+//                successMsg: ''
             }
         },
         methods: {
@@ -49,10 +53,14 @@
                 this.topStatus = status;
             },
             topMethod() {
+                this.msgShow = false;
                 http.getTop(this.list[0]).then(res => {
                     console.log(res);
                     this.list.unshift(...res);
-                    this.$refs.loadmore.onTopLoaded();
+                    this.msgShow = true;
+                    setTimeout(() => {
+                        this.$refs.loadmore.onTopLoaded();
+                    }, 500);
                 });
             }
         }
@@ -95,6 +103,7 @@
 
     ul > li {
         border-bottom: 1px solid gainsboro;
+        background-color: #ffe5f7;
         padding: 20px 10px;
     }
 
