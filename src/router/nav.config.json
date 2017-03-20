@@ -8,6 +8,10 @@
       "path": "/infinite-scroll",
       "name": "InfiniteScroll",
       "linkName": "上拉加载 InfiniteScroll(无限滚动)"
+    },{
+      "path": "/pull-down-and-infinite-scroll",
+      "name": "PullDownAndInfiniteScroll",
+      "linkName": "下拉刷新 上拉加载"
     }
   ]
 }
