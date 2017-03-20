@@ -1,20 +1,30 @@
 <template>
     <div class="hello">
         <h1>{{ msg }}</h1>
+        <hr>
+        <ul>
+            <li v-for="item in nav">
+                <router-link :to="{name:item.name}" v-text="item.name"></router-link>
+            </li>
+        </ul>
     </div>
 </template>
 
 <script>
     import {Toast} from 'mint-ui';
+    import config from '../router/nav.config.json'
+
     export default {
         name: 'hello',
-        data () {
+        data(){
             return {
-                msg: 'Welcome to Your Vue.js App'
+                nav: null,
+                msg: 'M站的UI组件库'
             }
         },
         created(){
-            Toast(this.msg)
+//            Toast(this.msg)
+            this.nav = config.navList;
         }
     }
 </script>
