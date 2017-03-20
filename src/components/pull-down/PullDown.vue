@@ -8,6 +8,9 @@
             事件
             top-status-change：顶部状态发生变化
 
+            组件里面如果只放入列表。mt-loadmore会自动包两层。
+            最好用一个slot。把ul的部分也放入（组件封装组件）
+
         -->
         <h1>!</h1>
         <h1 style="position: absolute; width: 100% ;top: 0">下拉更新</h1>
@@ -29,6 +32,7 @@
                 </span>
             </div>
         </mt-loadmore>
+
     </div>
 </template>
 
@@ -101,13 +105,13 @@
         padding: 0;
     }
 
-    ul > li {
+    ul li {
         border-bottom: 1px solid gainsboro;
         background-color: #ffe5f7;
         padding: 20px 10px;
     }
 
-    ul > li:nth-child(even) {
+    ul li:nth-child(even) {
         background-color: #bbefa0;
     }
 </style>
