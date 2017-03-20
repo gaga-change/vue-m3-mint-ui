@@ -2,7 +2,12 @@
   "navList": [
     {
       "path": "/pull-down",
-      "name": "PullDown"
+      "name": "PullDown",
+      "linkName": "下拉刷新 PullDown"
+    },{
+      "path": "/infinite-scroll",
+      "name": "InfiniteScroll",
+      "linkName": "上拉加载 InfiniteScroll(无限滚动)"
     }
   ]
 }

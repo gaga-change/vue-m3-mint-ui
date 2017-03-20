@@ -4,7 +4,7 @@
         <hr>
         <ul>
             <li v-for="item in nav">
-                <router-link :to="{name:item.name}" v-text="item.name"></router-link>
+                <router-link :to="{name:item.name}" v-text="item.linkName"></router-link>
             </li>
         </ul>
     </div>
@@ -31,21 +31,32 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-    h1, h2 {
-        font-weight: normal;
+    h1 {
+        text-align: center;
+        background-color: antiquewhite;
+        z-index: 10;
+        margin: 0;
+        padding: 20px;
     }
 
     ul {
-        list-style-type: none;
+        list-style: none;
+        margin: 0;
         padding: 0;
     }
 
-    li {
-        display: inline-block;
-        margin: 0 10px;
+    ul li {
+        border-bottom: 1px solid gainsboro;
+        background-color: #ffe5f7;
+        padding: 20px 10px;
     }
-
-    a {
-        color: #42b983;
+    a{
+        text-decoration: none;
+    }
+    a:link, a:visited, a:hover, a:active {
+        color: #222;
+    }
+    ul li:nth-child(even) {
+        background-color: #bbefa0;
     }
 </style>
