@@ -1,7 +1,5 @@
 <template>
     <div>
-        <h1>!</h1>
-        <h1 style="position: absolute; width: 100% ;top: 0">下拉刷新，上拉加载</h1>
         <div ref="wrapper" :style="{ height: wrapperHeight + 'px' }">
             <mt-loadmore
                     ref="loadmore"
@@ -14,9 +12,8 @@
                     infinite-scroll-immediate-check="test"
                     infinite-scroll-distance="100"
             >
-                <ul>
-                    <li v-for="item in list" v-text="item"></li>
-                </ul>
+                <slot></slot>
+                <slot name="noDataShow" v-if="noDataShow"></slot>
                 <p v-show="loading && init && !allLoading" class="page-infinite-loading">
                     <mt-spinner type="fading-circle"></mt-spinner>
                     加载中...
@@ -43,36 +40,78 @@
 
     import http from './http'
     export  default {
+        props: ['dataArr', 'updateTop', 'updateBottom', 'start'],
+        watch: {
+            /**
+             * 如果sonStart为true，视为启动组件。执行firstLoadMore方法
+             * @param val
+             */
+            sonStart(val){
+                if (val) {
+                    this.firstLoadMore();
+                }
+            }
+        },
+        computed: {
+            /**
+             * 处理dataArr为空的情况
+             * @returns {*|Array}
+             */
+            list(){
+                return this.dataArr || [];
+            },
+            /**
+             * 通过computed获取父组件的数据。防止直接调用。
+             */
+            sonStart(){
+                return this.start;
+            }
+        },
         data(){
+            /**
+             * 皆为内部状态，组件内部独立使用。
+             */
             return {
-                list: [1, 2, 3, 4, 5],
-                topStatus: '',
-                msgShow: false,
+                topStatus: '', // 顶部状态
+                msgShow: false, // 是否显示刷新成功信息
 
+                noDataShow: false, // 是否显示 slot.name = noDataShow 内的html
                 loading: true, // 不会触发
-                init: false,
-                allLoading: false,
+                init: false, // 是否被初始化，确保 firstLoadMore 只执行一次。
+                allLoading: false, // 是否数据接收完毕
                 wrapperHeight: 0
             }
         },
         mounted(){
             this.wrapperHeight = document.documentElement.clientHeight - this.$refs.wrapper.getBoundingClientRect().top;
-            setTimeout(() => {
-                this.loadMore();
-                this.init = true;
-            }, 50)
         },
         methods: {
+            /**
+             * 激活组件时，执行一次 ladMore。
+             */
+            firstLoadMore(){
+                if (this.init)return;
+                this.loadMore();
+                this.init = true;
+            },
+            /**
+             * 下拉状态变化回调函数。
+             * @param status
+             */
             topStatusChange(status){
                 // 下拉和释放状态，主要用于控制下拉的样式效果
                 this.topStatus = status;
             },
+            /**
+             * 下拉时执行该函数。
+             */
             topMethod() {
                 this.msgShow = false;
-                http.getTop(this.list[0]).then(res => {
-                    console.log(res);
-                    this.list.unshift(...res);
+                this.updateTop().then(() => {  // 内部调用父组件传入的刷新方法。
                     this.msgShow = true;
+                    if (this.list.length == 0) {
+                        this.noDataShow = true;
+                    }
                     setTimeout(() => {
                         this.$refs.loadmore.onTopLoaded();
                     }, 500);
@@ -80,15 +119,16 @@
             },
             loadMore() {
                 this.loading = true;
-                let last = this.list[this.list.length - 1] || 0;
-                http.loadMore(last).then((res) => {
-                    if (res.length == 0) {
-                        console.log("加载完毕");
+                this.updateBottom().then((noData) => {
+                    if (noData) {
+//                        console.log("加载完毕");
+                        if (this.list.length == 0) {
+                            this.noDataShow = true;
+                        }
                         this.allLoading = true;
-                        return;
+                    } else {
+                        this.loading = false;
                     }
-                    this.list.push(...res);
-                    this.loading = false;
                 });
             }
         }
@@ -96,6 +136,7 @@
 </script>
 
 <style scoped>
+    /*转动刷新 居中*/
     .mint-loadmore-top {
         z-index: -100;
     }
@@ -104,7 +145,6 @@
         display: inline-block;
         transition: .2s linear;
         vertical-align: middle;
-
     }
 
     .rotate {
@@ -113,29 +153,5 @@
 
     .mint-loadmore {
         overflow: visible;
-    }
-
-    h1 {
-        text-align: center;
-        background-color: antiquewhite;
-        z-index: 10;
-        margin: 0;
-        padding: 20px;
-    }
-
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    ul li {
-        border-bottom: 1px solid gainsboro;
-        background-color: #ffe5f7;
-        padding: 20px 10px;
-    }
-
-    ul li:nth-child(even) {
-        background-color: #bbefa0;
     }
 </style>
